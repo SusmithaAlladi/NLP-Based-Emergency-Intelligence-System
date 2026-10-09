@@ -1,0 +1,197 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Emergency Intelligence System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 30px 15px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: auto;
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px #00000012;
+        }
+
+        h1 {
+            color: #b91c1c;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        textarea, input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 6px;
+            background: #b91c1c;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #991b1b;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            overflow-wrap: anywhere;
+        }
+
+        .warning {
+            color: #92400e;
+            background: #fffbeb;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .dashboard-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #1d4ed8;
+        }
+
+        .field {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Emergency Intelligence System</h1>
+
+        <p class="subtitle">
+            NLP-Based Emergency Intelligence &amp; Response System
+        </p>
+
+        <p>
+            Submit an emergency report for text classification and human review.
+        </p>
+
+        <form method="POST" action="/">
+            <label for="message">Emergency Description</label>
+
+            <textarea
+                id="message"
+                name="message"
+                placeholder="Example: There is a fire in an apartment building and smoke is spreading."
+                required
+            ></textarea>
+
+            <label for="location">Incident Location</label>
+
+            <input
+                type="text"
+                id="location"
+                name="location"
+                placeholder="Example: Kakinada Bus Stand"
+                required
+            >
+
+            <button type="submit">Analyze and Submit</button>
+        </form>
+
+        {% if result %}
+            <div class="result">
+                {% if result.error %}
+                    <h3>Please check your input</h3>
+                    <p>{{ result.error }}</p>
+                {% else %}
+                    <h2>Report Submitted</h2>
+
+                    <div class="field">
+                        <strong>Incident ID:</strong>
+                        #{{ result.id }}
+                    </div>
+
+                    <div class="field">
+                        <strong>Category:</strong>
+                        {{ result.category | replace("_", " ") | title }}
+                    </div>
+
+                    <div class="field">
+                        <strong>Review Priority:</strong>
+                        {{ result.priority }}
+                    </div>
+
+                    <div class="field">
+                        <strong>Location:</strong>
+                        {{ result.location }}
+                    </div>
+
+                    <div class="field">
+                        <strong>Description:</strong>
+                        {{ result.message }}
+                    </div>
+
+                    <div class="field">
+                        <strong>Submitted At:</strong>
+                        {{ result.created_at }}
+                    </div>
+
+                    <div class="field">
+                        <strong>Status:</strong>
+                        {{ result.status }}
+                    </div>
+
+                    <p class="warning">
+                        This is an experimental classification result.
+                        A human must verify the report and its priority.
+                        Do not rely on this website for emergency dispatch.
+                        For a real emergency in India, call 112.
+                    </p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <a class="dashboard-link" href="{{ url_for('dashboard') }}">
+            View Incident Dashboard
+        </a>
+    </div>
+</body>
+</html>
+```

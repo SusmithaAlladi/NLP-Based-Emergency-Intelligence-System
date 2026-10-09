@@ -1,0 +1,196 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Incident Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            padding: 25px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #b91c1c;
+        }
+
+        .summary {
+            background: white;
+            padding: 18px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 950px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+
+        th {
+            background: #e2e8f0;
+        }
+
+        select, button {
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #1d4ed8;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        .message {
+            background: #dcfce7;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .stats {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Emergency Incident Dashboard</h1>
+
+        <div class="summary">
+            <h2>Total Incidents: {{ total }}</h2>
+
+            <div class="stats">
+                <h3>Incidents by Category</h3>
+
+                {% if category_counts %}
+                    {% for item in category_counts %}
+                        <p>
+                            {{ item.category | replace("_", " ") | title }}:
+                            {{ item.count }}
+                        </p>
+                    {% else %}
+                        <p>No category data available.</p>
+                    {% endfor %}
+                {% else %}
+                    <p>No incidents submitted yet.</p>
+                {% endif %}
+            </div>
+
+            <div class="stats">
+                <h3>Incidents by Status</h3>
+
+                {% if status_counts %}
+                    {% for item in status_counts %}
+                        <p>{{ item.status }}: {{ item.count }}</p>
+                    {% endfor %}
+                {% else %}
+                    <p>No status data available.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="message">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Category</th>
+                        <th>Review Priority</th>
+                        <th>Created At</th>
+                        <th>Status</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for incident in incidents %}
+                        <tr>
+                            <td>{{ incident.id }}</td>
+                            <td>{{ incident.message }}</td>
+                            <td>{{ incident.location }}</td>
+                            <td>
+                                {{ incident.category | replace("_", " ") | title }}
+                            </td>
+                            <td>{{ incident.priority }}</td>
+                            <td>{{ incident.created_at }}</td>
+                            <td>{{ incident.status }}</td>
+
+                            <td>
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('update_incident', incident_id=incident.id) }}"
+                                >
+                                    <select name="status" required>
+                                        {% for status in statuses %}
+                                            <option
+                                                value="{{ status }}"
+                                                {% if status == incident.status %}
+                                                    selected
+                                                {% endif %}
+                                            >
+                                                {{ status }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <button type="submit">Update</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8">No incidents submitted yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <a class="back-link" href="{{ url_for('home') }}">
+            Back to Emergency Report Form
+        </a>
+    </div>
+</body>
+</html>
+```
