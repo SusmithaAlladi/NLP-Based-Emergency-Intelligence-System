@@ -1,0 +1,5 @@
+**pycache**/
+.venv/
+venv/
+emergency.db
+.env
